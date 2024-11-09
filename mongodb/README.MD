@@ -203,3 +203,11 @@ As condicionais e operadores booleanos podem ser combinados para criar expressõ
 - `$in`: contém um valor especificado
 
 Entre outros, veja a [documentação oficial](https://docs.mongodb.com/manual/reference/operator/query-comparison/).   
+
+#### Agora é sua vez
+
+Crie uma nova coleção chamada `filmes` e execute as seguintes tarefas:
+
+1. Usando a coleção `db.filmes` vista neste documento, escreva um comando para inserir um filme na colecao.
+2. Usando a coleção `db.filmes` vista neste documento, escreva um comando para remover todos os filmes com um `rating` menor ou igual a 5.
+3. Usando a coleção `db.filmes` vista neste documento, escreva um comando para exibir todos os filmes com um `rating` maior ou igual a 9.
