@@ -94,7 +94,7 @@ exit
 
 Uma vez conectado, você pode navegar e exibir as estruturas do banco de dados.
 
-#### Inserindo dados no MongoDB
+### 1.6 Inserindo dados no MongoDB
 
 1. As coleções são objetos capazes de realizar várias operações diferentes. O método insert adiciona documentos a uma coleção. Por exemplo, o seguinte código adiciona um único documento que descreve um livro de Kurt Vonnegut à coleção de livros:
 
@@ -136,7 +136,7 @@ db.books.insertMany([
 
 > :memo: Consulte a documentação para verificar os limites no tamanho das inserções em massa. Se você tiver muitos documentos grandes, pode ser necessário realizar várias inserções em massa para garantir que seu conjunto de documentos não exceda o limite de tamanho permitido para inserções em massa.
 
-#### Deletando dados no MongoDB
+### 1.7 Deletando dados no MongoDB
 
 1. Para deletar um documento, execute o seguinte comando:
 ```json
@@ -153,7 +153,7 @@ db.books.deleteMany( {} )
 
 > :memo: É importante ter um cuidado especial ao excluir documentos que possam estar referenciados em outros documentos. Bancos de dados relacionais foram projetados para evitar esse tipo de problema, mas bancos de dados de documentos dependem do código da aplicação para gerenciar esse tipo de integridade de dados.
 
-#### Atualizando dados no MongoDB
+### 1.8 Atualizando dados no MongoDB
 
 1. Para atualizar um documento, execute o seguinte comando:
 ```json
@@ -176,7 +176,7 @@ db.books.find()
 db.books.updateOne( { "title": "Mother Night" }, { $inc: { "quantity": 5 } } )
 ```
 
-#### Exibindo dados no MongoDB
+### 1.9 Exibindo dados no MongoDB
 
 O método `find` é usado para recuperar documentos de uma coleção. Como você pode esperar, o método `find` aceita um documento de consulta opcional que especifica quais documentos devem ser retornados. Se você quiser apenas um subconjunto de documentos no banco de dados, deverá especificar critérios de seleção usando um documento.
 
@@ -204,7 +204,7 @@ As condicionais e operadores booleanos podem ser combinados para criar expressõ
 
 Entre outros, veja a [documentação oficial](https://docs.mongodb.com/manual/reference/operator/query-comparison/).   
 
-#### Agora é sua vez
+### 1.10 Agora é sua vez
 
 Crie uma nova coleção chamada `filmes` e execute as seguintes tarefas:
 
