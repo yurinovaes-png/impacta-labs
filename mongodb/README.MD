@@ -53,81 +53,153 @@ Em vez de se conectar ao `mongod`, a aplicação deve se conectar a um roteador 
 
 Para tarefas administrativas, você pode usar o shell do MongoDB para se conectar tanto ao `mongos` quanto ao `mongod`.
 
-### 1.5 Conectando-se a uma Instância Local 
-Agora, vamos usar o seu entendimento básico dos componentes do MongoDB para se conectar a uma instância.
+### 1.5 Construíndo a imagem docker do MongoDB 
+1. Para construir a imagem, navegue para a pasta **impacta-labs/mongodb** e execute o seguinte comando:
+```bash
+docker build -t impacta_labs_mongodb .
+```
+
+2. Para iniciar o container, execute o seguinte comando:
+```bash
+docker run -d -p 27017:27017 --name mongodb-standalone impacta_labs_mongodb
+```
 
 #### Shell do MongoDB
 
-Primeiro, vamos tentar conectar usando o shell do MongoDB (**mongo**) sem nome de usuário e senha.
+Primeiro, vamos tentar conectar usando o shell do MongoDB (**mongosh**) sem nome de usuário e senha.
 
-Você pode executar o seguinte comando:
-
+1. Para acessar o shell do MongoDB, execute o seguinte comando:   
+```bash  
+docker exec -it mongodb-standalone mongosh
 ```
-mongo
+
+2. Para navegar no banco de dados, execute o seguinte comando:
+```bash
+db
 ```
 
-Para sair e fechar a conexão com a instância, execute o seguinte:
+3. Para exibir as coleções do banco de dados, execute o seguinte comando:
+```bash
+show collections
+```
 
+4. Para sair do shell do MongoDB, execute o seguinte comando:
 ```
 exit
 ```
 
 > :warning: Antes de seguir em frente, é importante destacar que essa instância não tem controle de acesso habilitado, o que permite que você se conecte livremente sem nome de usuário e senha. Do ponto de vista da segurança, essa não é uma configuração recomendada para ambientes de produção.
 
-**Construindo sua String de Conexão**  
-No mundo real qualquer base de dados deve ter algum tipo de controle de acesso habilitado. Para se conectar nessas circunstâncias, você deve usar um nome de usuário e senha válidos. Existem dois métodos para construir sua string de conexão:
-
-1. **Usando o formato URI (_Uniform Resource Identifier_)**: Para uma instância independente com controle de acesso habilitado. Um exemplo de string de conexão usando o formato URI é o seguinte:
-
-   ```
-   mongo mongodb://dba_adm:sekr3t@mongodb0.example.com:27017/?authSource=admin
-   ```
-
-   Onde:
-
-   - **dba_adm** é o usuário
-   - **sekr3t** é a senha
-   - **mongodb0.example.com** é o host
-   - **27017** é a porta
-   - **authSource** é o banco de dados com as credenciais do usuário
-
-   A porta padrão para o **mongod** é 27017.
-
-2. **Passando opções diretamente no comando do shell do MongoDB**:
-
-   ```
-   mongo --host=mongodb0.example.com \
-   --port=27017 \
-   --username=dba_adm \
-   --password=sekr3t \
-   --authenticationDatabase=admin
-   ```
-
-   Embora ambos os métodos tenham o mesmo propósito, o método URI é amplamente utilizado em drivers de aplicação, e o segundo método funcionará apenas no shell do MongoDB.
-
-**Testando a Conexão**  
-Embora o controle de acesso não esteja habilitado, você pode se conectar usando o seguinte usuário:
-
-- **username**: read_user  
-- **password**: gswmongo  
-- **authSource**: playground  
-
-Você pode substituir essas informações de usuário na string de conexão da seguinte maneira:
-
-```
-mongo mongodb://db_admin:'gswmongo'@localhost:27017/?authSource=playground
-```
-
-ou:
-
-```
-mongo --host=localhost \
---port=27017 \
---username=db_admin \
---password='gswmongo' \
---authenticationDatabase=playground
-```
-
 Ótimo! Você usou o shell do MongoDB para se conectar a uma instância MongoDB.
 
 Uma vez conectado, você pode navegar e exibir as estruturas do banco de dados.
+
+#### Inserindo dados no MongoDB
+
+1. As coleções são objetos capazes de realizar várias operações diferentes. O método insert adiciona documentos a uma coleção. Por exemplo, o seguinte código adiciona um único documento que descreve um livro de Kurt Vonnegut à coleção de livros:
+
+```json
+db.books.insertOne( { title: "Mother Night", author: "Kurt Vonnegut, Jr." } )
+```
+
+> :memo: É uma boa prática incluir um identificador único em cada documento quando ele é inserido.
+
+2. Em vez de simplesmente adicionar um documento de livro com o título e o nome do autor, uma opção melhor seria incluir um identificador único, como em:
+
+```json
+db.books.insertOne( {book_id: 1298747, "title":"Mother Night", "author": "Kurt Vonnegut, Jr."} )
+```
+
+> :memo: Diferentes bancos de dados de documentos têm recomendações diferentes para identificadores únicos. O MongoDB adiciona um identificador único se nenhum for fornecido.
+
+3. Em muitos casos, é mais eficiente realizar inserções em massa em vez de uma série de inserções individuais. Por exemplo:
+
+```json
+db.books.insertMany([
+   {
+      "book_id": 1298747,
+      "title":"Mother Night",
+      "author": "Kurt Vonnegut, Jr."
+   },
+   {
+      "book_id": 639397,
+      "title":"Science and the Modern World",
+      "author": "Alfred North Whitehead"
+   },
+   {
+      "book_id": 1456701,
+      "title":"Foundation and Empire",
+      "author": "Isaac Asimov"
+   }
+])
+```
+
+> :memo: Consulte a documentação para verificar os limites no tamanho das inserções em massa. Se você tiver muitos documentos grandes, pode ser necessário realizar várias inserções em massa para garantir que seu conjunto de documentos não exceda o limite de tamanho permitido para inserções em massa.
+
+#### Deletando dados no MongoDB
+
+1. Para deletar um documento, execute o seguinte comando:
+```json
+db.books.deleteOne( { "book_id": 1298747 } )
+```
+2. Para deletar um documento utilizando um atributo específico, execute o seguinte comando:
+```json
+db.books.deleteOne( { "author": "Kurt Vonnegut, Jr." } )
+```
+3. Para deletar todos os documentos, execute o seguinte comando:
+```json
+db.books.deleteMany( {} )
+```
+
+> :memo: É importante ter um cuidado especial ao excluir documentos que possam estar referenciados em outros documentos. Bancos de dados relacionais foram projetados para evitar esse tipo de problema, mas bancos de dados de documentos dependem do código da aplicação para gerenciar esse tipo de integridade de dados.
+
+#### Atualizando dados no MongoDB
+
+1. Para atualizar um documento, execute o seguinte comando:
+```json
+db.books.updateOne( { "book_id": 1298747 }, { $set: { "quantity": 10 } } )
+```
+
+O comando `update` adiciona uma chave se ela não existir e define o valor conforme indicado. Se a chave já existir, o comando update altera o valor associado a ela.
+
+Bancos de dados de documentos às vezes oferecem outros operadores além dos comandos `set`. Por exemplo, o MongoDB possui um operador de incremento `($inc)`, que é usado para aumentar o valor de uma chave pela quantidade especificada.
+
+2. Para exibir todos os documentos, execute o seguinte comando:
+
+```json
+db.books.find()
+```
+
+3. O comando a seguir alteraria a quantidade de Mother Night de 10 para 15:
+
+```json
+db.books.updateOne( { "title": "Mother Night" }, { $inc: { "quantity": 5 } } )
+```
+
+#### Exibindo dados no MongoDB
+
+O método `find` é usado para recuperar documentos de uma coleção. Como você pode esperar, o método `find` aceita um documento de consulta opcional que especifica quais documentos devem ser retornados. Se você quiser apenas um subconjunto de documentos no banco de dados, deverá especificar critérios de seleção usando um documento.
+
+1. Por exemplo, o seguinte comando retorna todos os livros de Kurt Vonnegut, Jr.:
+
+```json
+db.books.find( { "author": "Kurt Vonnegut, Jr." } )
+```
+
+Consultas mais complexas são construídas usando condicionais e operadores booleanos. 
+
+2. Para recuperar todos os livros com uma quantidade maior ou igual a 10 e menor que 50, você poderia usar o seguinte comando:
+
+```json
+db.books.find( { "quantity": { $gte: 10, $lt: 50 } } )
+```
+
+As condicionais e operadores booleanos podem ser combinados para criar expressões mais complexas, o MongoDB permite as seguintes expressões:
+
+- `$gt`: maior que
+- `$lte`: menor ou igual que
+- `$eq`: igual a
+- `$ne`: diferente de
+- `$in`: contém um valor especificado
+
+Entre outros, veja a [documentação oficial](https://docs.mongodb.com/manual/reference/operator/query-comparison/).   
