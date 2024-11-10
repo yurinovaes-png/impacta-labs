@@ -202,12 +202,43 @@ As condicionais e operadores booleanos podem ser combinados para criar expressõ
 - `$ne`: diferente de
 - `$in`: contém um valor especificado
 
-Entre outros, veja a [documentação oficial](https://docs.mongodb.com/manual/reference/operator/query-comparison/).   
+Entre outros, veja a [documentação oficial](https://docs.mongodb.com/manual/reference/operator/query-comparison/).
 
-### 1.10 Agora é sua vez
+### 1.10 Utilizando agregações no MongoDB
 
-Crie uma nova coleção chamada `filmes` e execute as seguintes tarefas:
+Operações de agregação processam diversos documentos e geram resultados calculados. Você pode usar operações de agregação para:
+- Agrupar valores de diversos documentos.
+- Executar operações nos dados agrupados para gerar um único resultado.
+- Analisar alterações de dados ao longo do tempo.
 
-1. Usando a coleção `db.filmes` vista neste documento, escreva um comando para inserir um filme na colecao.
-2. Usando a coleção `db.filmes` vista neste documento, escreva um comando para remover todos os filmes com um `rating` menor ou igual a 5.
-3. Usando a coleção `db.filmes` vista neste documento, escreva um comando para exibir todos os filmes com um `rating` maior ou igual a 9.
+1. Para agrupar os livros por autor, execute o seguinte comando:
+```json
+db.books.aggregate([
+  { $group: { _id: "$author", total: { $sum: 1 } } }
+])
+```
+
+2. Para calcular a quantidade total de livros por autor, execute o seguinte comando:
+```json
+db.books.aggregate([
+  { $group: { _id: "$author", total: { $sum: "$quantity" } } }
+])
+```
+
+## Agora é sua vez
+
+1. Crie uma nova coleção chamada `filmes`, ela deve conter os seguintes campos:
+- `title`
+- `rating`
+- `release_date`
+
+2. Usando a coleção `db.filmes`, escreva um comando para inserir um filme na colecao.
+3. Usando a coleção `db.filmes`, escreva um comando para inserir 5 filmes na colecao,
+- Um com `rating` 2
+- Outro com `rating` 4
+- Outro com `rating` 5
+- Outro com `rating` 9
+- Por fim, outro com `rating` 10.
+4. Usando a coleção `db.filmes`, escreva um comando que retorne a média dos filmes.
+5. Usando a coleção `db.filmes`, escreva um comando para remover todos os filmes com um `rating` menor ou igual a 5.
+6. Usando a coleção `db.filmes`, escreva um comando para exibir todos os filmes com um `rating` maior ou igual a 9.
