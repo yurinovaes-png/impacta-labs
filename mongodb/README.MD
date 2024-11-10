@@ -227,18 +227,18 @@ db.books.aggregate([
 
 ## Agora é sua vez
 
-1. Crie uma nova coleção chamada `filmes`, ela deve conter os seguintes campos:
-- `title`
-- `rating`
-- `release_date`
+> Para os próximos exercícios, uma nova coleção chamada `filmes` deverá conter documentos com os seguintes campos:
+> - `title`
+> - `rating`
+> - `release_date`
 
-2. Usando a coleção `db.filmes`, escreva um comando para inserir um filme na colecao.
-3. Usando a coleção `db.filmes`, escreva um comando para inserir 5 filmes na colecao,
+1. Usando a coleção `db.filmes`, escreva um comando para inserir um filme na colecao.
+2. Usando a coleção `db.filmes`, escreva um comando para inserir 5 filmes na colecao,
 - Um com `rating` 2
 - Outro com `rating` 4
 - Outro com `rating` 5
 - Outro com `rating` 9
 - Por fim, outro com `rating` 10.
-4. Usando a coleção `db.filmes`, escreva um comando que retorne a média dos filmes.
-5. Usando a coleção `db.filmes`, escreva um comando para remover todos os filmes com um `rating` menor ou igual a 5.
-6. Usando a coleção `db.filmes`, escreva um comando para exibir todos os filmes com um `rating` maior ou igual a 9.
+3. Usando a coleção `db.filmes`, escreva um comando que retorne a média dos filmes.
+4. Usando a coleção `db.filmes`, escreva um comando para remover todos os filmes com um `rating` menor ou igual a 5.
+5. Usando a coleção `db.filmes`, escreva um comando para exibir todos os filmes com um `rating` maior ou igual a 9.
