@@ -198,7 +198,7 @@ INSERT INTO user (first_name, middle_initial, last_name,
 
 INSERT INTO user (first_name, middle_initial, last_name,
   title)
-  VALUES ('Bill', 'R', 'Nguyen', 'Mr.');
+  VALUES ('Wanda', 'R', 'Nguyen', 'Mrs.');
 ```
 
 Leia os resultados:
@@ -304,7 +304,7 @@ SELECT toDate(account_created) FROM user WHERE last_name = 'Nguyen';
 
 Agora, digamos que você queira estender a tabela de usuários para suportar múltiplos endereços de e-mail. Uma maneira de fazer isso seria criar colunas adicionais, como email1, email2, email3, e assim por diante. Embora essa abordagem funcione, ela não escala muito bem e pode causar muito retrabalho. É muito mais simples lidar com os endereços de e-mail como um grupo ou "coleção." O CQL fornece três tipos de coleções para ajudá-lo nessas situações: conjuntos (*sets*), listas (*lists*) e mapas (*maps*).
 
-O tipo de dado `set` armazena uma coleção de elementos. Os elementos não têm ordem específica quando armazenados, mas são retornados em ordem ordenada. Por exemplo, valores de texto são retornados em ordem alfabética. Uma vantagem de usar *set* é a capacidade de inserir itens adicionais sem precisar ler o conteúdo antes.
+O tipo de dado `set` armazena uma coleção de elementos. Os elementos não têm ordem específica quando armazenados, mas são retornados em ordem ordenada. Por exemplo, valores de texto são retornados em ordem alfabética. Uma vantagem de usar *set* é a capacidade de inserir itens adicionais sem precisar ler o conteúdo antes. Além disso, os elementos de uma coleção set são únicos, não podendo haver duplicatas.
 
 Você pode modificar a tabela de usuários para adicionar um *set* de endereços de e-mail:
 
@@ -571,7 +571,7 @@ Observe que provavelmente haverá mais de um hotel próximo a um determinado pon
 
 > :warning: Uma consideração importante no design da chave primária da tabela é garantir que ela defina um elemento de dado único. Caso contrário, corre-se o risco de sobrescrever dados acidentalmente.
 
-Vamos também assumir que, de acordo com o _workflow_ do seu aplicativo, seu usuário fornecerá o nome de um ponto de interesse, mas seria útil visualizar a descrição desse ponto de interesse juntamente com os resultados dos hotéis. Portanto, você inclui a `poi_description` como uma coluna na tabela `hotels_by_poi` e atribui um valor fixo valor em uma coluna estática, já que a descrição do ponto de interesse é a mesma para todas as linhas de uma partição.
+Vamos também assumir que, de acordo com o _workflow_ do seu aplicativo, seu usuário fornecerá o nome de um ponto de interesse, mas seria útil visualizar a descrição desse ponto de interesse juntamente com os resultados dos hotéis. Portanto, você inclui a `poi_description` como uma coluna na tabela `hotels_by_poi` e atribui um valor fixo em uma coluna estática, já que a descrição do ponto de interesse é a mesma para todas as linhas de uma partição.
 
 Você pode criar esta tabela usando o seguinte comando no `cqlsh`:
 
