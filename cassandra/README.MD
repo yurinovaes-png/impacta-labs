@@ -13,7 +13,8 @@ docker build -t impacta_labs_cassandra .
 docker run -d --name cassandra-node -p 9042:9042 impacta_labs_cassandra
 ```
 
-> :warning: O container pode demorar alguns minutos para iniciar. Você pode acompanhar o progresso usando o comando `docker logs cassandra-node`.
+> [!WARNING]
+> O container pode demorar alguns minutos para iniciar. Você pode acompanhar o progresso usando o comando `docker logs cassandra-node`.
 
 3. Para acessar o shell do Cassandra, execute o seguinte comando:   
 ```bash  
@@ -57,7 +58,8 @@ CREATE KEYSPACE impacta_keyspace WITH replication = {'class': 'SimpleStrategy', 
 
 O `cqlsh` agora adicionou um colchete de fechamento, indicando que você completou todas as opções obrigatórias. Finalize o comando com um ponto e vírgula e pressione **Enter**, e seu *keyspace* será criado.
 
-> :warning: Para um *keyspace* de produção, você provavelmente nunca usará o valor `1` como fator de replicação. Existem opções adicionais para criar um *keyspace*, dependendo da estratégia de replicação escolhida. O recurso de autocompletar do comando guiará você pelas diferentes opções.
+> [!WARNING]
+> Para um *keyspace* de produção, você provavelmente nunca usará o valor `1` como fator de replicação. Existem opções adicionais para criar um *keyspace*, dependendo da estratégia de replicação escolhida. O recurso de autocompletar do comando guiará você pelas diferentes opções.
 
 Confira seu keyspace usando o comando `DESCRIBE KEYSPACE`:
 
@@ -75,7 +77,8 @@ USE impacta_keyspace;
 
 > :eyes: Note que o prompt mudou para indicar que você está usando o keyspace.
 
-> :memo: Você pode ter se perguntado por que sugeri nomear seu keyspace em **"snake case"** (por exemplo, `impacta_keyspace`) em vez de **"camel case"** (como `MyKeyspace`), que é mais familiar para desenvolvedores que utilizam Java e outras linguagens. Acontece que o Cassandra processa automaticamente os nomes de keyspace, tabelas e colunas como **letras minúsculas**. Quando você insere nomes em letras maiúsculas e minúsculas combinadas (_mixed case_), o Cassandra os armazena como letras minúsculas. Esse comportamento pode ser sobrescrito ao envolver os nomes entre aspas duplas (por exemplo, `CREATE KEYSPACE "MyKeyspace"`). No entanto, tende a ser muito mais simples usar **snake case** do que contrariar essa convenção.
+> [!TIP]
+>  Você pode ter se perguntado por que sugeri nomear seu keyspace em **"snake case"** (por exemplo, `impacta_keyspace`) em vez de **"camel case"** (como `MyKeyspace`), que é mais familiar para desenvolvedores que utilizam Java e outras linguagens. Acontece que o Cassandra processa automaticamente os nomes de keyspace, tabelas e colunas como **letras minúsculas**. Quando você insere nomes em letras maiúsculas e minúsculas combinadas (_mixed case_), o Cassandra os armazena como letras minúsculas. Esse comportamento pode ser sobrescrito ao envolver os nomes entre aspas duplas (por exemplo, `CREATE KEYSPACE "MyKeyspace"`). No entanto, tende a ser muito mais simples usar **snake case** do que contrariar essa convenção.
 
 ### 2. Criando uma Tabela
 
@@ -136,7 +139,8 @@ SELECT * FROM user WHERE first_name = 'Bill';
 
 Como você pode ver, você recebe uma mensagem de erro. Esse comportamento pode não parecer intuitivo à primeira vista, mas está relacionado à composição da chave primária que você usou para esta tabela. Este é o seu primeiro indício de que acessar dados no Cassandra pode ser um pouco diferente do que você está acostumado a fazer em SQL.
 
-> :warning: Usar `ALLOW FILTERING` não é recomendado, pois isso pode resultar em consultas muito caras. Se você se encontrar precisando de uma consulta assim, é recomendável revisar seu modelo de dados para garantir que as tabelas foram projetadas para dar suporte às suas consultas.
+> [!WARNING]
+> Usar `ALLOW FILTERING` não é recomendado, pois isso pode resultar em consultas muito caras. Se você se encontrar precisando de uma consulta assim, é recomendável revisar seu modelo de dados para garantir que as tabelas foram projetadas para dar suporte às suas consultas.
 
 Você notará na última linha da saída que uma linha foi retornada. Essa linha corresponde à identificada pelo `last_name` "Nguyen" e `first_name` "Bill". Essa é a chave primária que identifica exclusivamente essa linha.
 
@@ -268,7 +272,8 @@ Cassandra também fornece vários tipos para representar o tempo.
 - 2015-06-15T20:05:07-0700  
 - 2015-06-15T20:05:07.013+-0700  
 
-> :memo: A melhor prática para esses tipos é sempre fornecer os fusos horários em vez de depender da configuração de fuso horário do sistema operacional.
+> [!TIP]
+>  A melhor prática para esses tipos é sempre fornecer os fusos horários em vez de depender da configuração de fuso horário do sistema operacional.
 
 Vamos usar o tipo `timestamp` para adicionar uma coluna à tabela `user` representando quando a conta foi criada:
 
@@ -426,7 +431,8 @@ Como uma lista armazena valores de acordo com a posição, há o risco de que at
 
 O tipo de dado `map` contém uma coleção de pares chave-valor. As chaves e os valores podem ser de qualquer tipo, exceto `counter`.
 
-> :memo: O tipo de dado "contador" fornece um inteiro de 64 bits com sinal, cujo valor não pode ser definido diretamente, mas apenas incrementado ou decrementado. Contadores são frequentemente usados para rastrear estatísticas, como número de visualizações de páginas, tweets, mensagens de log, entre outros. O tipo de dado contador possui algumas restrições especiais como visto acima, ele também não pode ser usado como parte de uma chave primária. Caso um contador seja utilizado, todas as colunas, exceto as colunas da chave primária, devem ser contadores.
+> [!TIP]
+>  O tipo de dado "contador" fornece um inteiro de 64 bits com sinal, cujo valor não pode ser definido diretamente, mas apenas incrementado ou decrementado. Contadores são frequentemente usados para rastrear estatísticas, como número de visualizações de páginas, tweets, mensagens de log, entre outros. O tipo de dado contador possui algumas restrições especiais como visto acima, ele também não pode ser usado como parte de uma chave primária. Caso um contador seja utilizado, todas as colunas, exceto as colunas da chave primária, devem ser contadores.
 
 Vamos experimentar isso usando um **map** para armazenar informações sobre logins de usuários. Crie uma coluna para rastrear o tempo da sessão de login, em segundos, usando um **timeuuid** como chave:
 
@@ -435,7 +441,8 @@ ALTER TABLE user ADD
   login_sessions map<timeuuid, int>;
 ```
 
-> :memo: O timeuuid é um UUID do Tipo 1, que é baseado no endereço MAC do computador, no horário do sistema e em um número de sequência usado para evitar duplicados. Esse tipo é frequentemente utilizado como um carimbo de data/hora. O CQL oferece várias funções práticas para interagir com o tipo timeuuid: `now()`, `dateOf()` e `unixTimestampOf()`.
+> [!TIP]
+>  O timeuuid é um UUID do Tipo 1, que é baseado no endereço MAC do computador, no horário do sistema e em um número de sequência usado para evitar duplicados. Esse tipo é frequentemente utilizado como um carimbo de data/hora. O CQL oferece várias funções práticas para interagir com o tipo timeuuid: `now()`, `dateOf()` e `unixTimestampOf()`.
 
 Depois, você pode adicionar algumas sessões de login para Mary:
 
@@ -525,7 +532,8 @@ Ao projetar modelos de dados no Cassandra, você começa pelo modelo de consulta
 
 Pense nos caminhos de consulta mais comuns que sua aplicação usará e, em seguida, crie as tabelas necessárias para suportá-las.
 
-> :memo: O design da interface do usuário da aplicação costuma ser um ótimo ponto de partida para identificar as consultas.
+> [!TIP]
+>  O design da interface do usuário da aplicação costuma ser um ótimo ponto de partida para identificar as consultas.
 
 Vamos utilizar um exemplo de uma aplicação para listar hotéis e detalhes de seus quartos. No diagrama abaixo, cada bloco representa uma etapa no _workflow_ da aplicação, com setas indicando os fluxos entre etapas e a consulta associada.
 
@@ -563,13 +571,15 @@ CREATE TYPE hotel.address (
 );
 ```
 
-> :memo: Os UDTs são frequentemente usados para criar agrupamentos lógicos de colunas que não são chaves primárias. Eles também podem ser armazenados em coleções (conjuntos, listas ou mapas) para reduzir ainda mais a complexidade do design. O escopo de um UDT é no _keyspace_ no qual ele é definido.
+> [!TIP]
+>  Os UDTs são frequentemente usados para criar agrupamentos lógicos de colunas que não são chaves primárias. Eles também podem ser armazenados em coleções (conjuntos, listas ou mapas) para reduzir ainda mais a complexidade do design. O escopo de um UDT é no _keyspace_ no qual ele é definido.
 
 A primeira consulta (`C1`) é para encontrar hotéis próximos a um ponto de interesse, então você chamará a tabela de `hotels_by_poi`. Você está pesquisando por um ponto de interesse, portanto seria ideal considerar o ponto de interesse como parte da chave primária. Vamos referenciar o ponto de interesse pelo nome porque, de acordo com seu _workflow_, é assim que seus usuários começarão a busca.
 
 Observe que provavelmente haverá mais de um hotel próximo a um determinado ponto de interesse, então você precisará de outro componente na sua chave primária para garantir uma partição única para cada hotel. Vamos adicionar o identificador único do hotel como uma coluna de clusterização.
 
-> :warning: Uma consideração importante no design da chave primária da tabela é garantir que ela defina um elemento de dado único. Caso contrário, corre-se o risco de sobrescrever dados acidentalmente.
+> [!WARNING]
+> Uma consideração importante no design da chave primária da tabela é garantir que ela defina um elemento de dado único. Caso contrário, corre-se o risco de sobrescrever dados acidentalmente.
 
 Vamos também assumir que, de acordo com o _workflow_ do seu aplicativo, seu usuário fornecerá o nome de um ponto de interesse, mas seria útil visualizar a descrição desse ponto de interesse juntamente com os resultados dos hotéis. Portanto, você inclui a `poi_description` como uma coluna na tabela `hotels_by_poi` e atribui um valor fixo em uma coluna estática, já que a descrição do ponto de interesse é a mesma para todas as linhas de uma partição.
 
@@ -588,7 +598,8 @@ CREATE TABLE hotels_by_poi (
 WITH CLUSTERING ORDER BY (hotel_id ASC);
 ```
 
-> :memo: Quando você usa o atributo `frozen` no Cassandra, está dizendo que o valor do campo será tratado como um único bloco atômico. Isso significa que ele será armazenado e recuperado como uma unidade indivisível.
+> [!TIP]
+>  Quando você usa o atributo `frozen` no Cassandra, está dizendo que o valor do campo será tratado como um único bloco atômico. Isso significa que ele será armazenado e recuperado como uma unidade indivisível.
 O Cassandra não permite que você atualize partes de um UDT diretamente. Assim, ao armazenar o endereço no formato `frozen`, qualquer atualização nele exige a substituição do UDT inteiro.
 
 Assumindo o uso de um sistema de códigos curtos para os valores de `hotel_id` (como é comum na indústria de hoteleira), você poderia inserir linhas de dados representando hotéis próximos a um ponto de interesse como segue:
@@ -628,7 +639,8 @@ CREATE TABLE hotels (
 );
 ```
 
-> :memo: Outra opção seria armazenar um conjunto de `poi_names` na tabela `hotels`. Essa é uma abordagem igualmente válida.
+> [!TIP]
+>  Outra opção seria armazenar um conjunto de `poi_names` na tabela `hotels`. Essa é uma abordagem igualmente válida.
 
 Você pode inserir linhas de dados representando os mesmos hotéis da etapa anterior da seguinte forma:
 
@@ -689,7 +701,8 @@ SELECT * FROM pois_by_hotel WHERE hotel_id = 'SP001';
 
 Agora vamos considerar como oferecer suporte aos usuários para encontrar quartos disponíveis em um hotel selecionado para os dias em que desejam se hospedar. Observe que essa consulta envolve tanto uma data de início quanto uma data de fim. Como você está consultando um intervalo em vez de uma única data, sabe que precisará usar a data como uma chave de agrupamento. Use colunas de agrupamento para armazenar os atributos que você precisa acessar em uma consulta por intervalo.
 
-> :warning: Lembre-se de que a ordem das colunas de agrupamento é importante.
+> [!WARNING]
+> Lembre-se de que a ordem das colunas de agrupamento é importante.
 
 Você utiliza o `hotel_id` como chave primária para agrupar os dados dos quartos de cada hotel em uma única partição, o que deve tornar sua busca super rápida. Vamos chamar essa tabela de `available_rooms_by_hotel_date`.
 

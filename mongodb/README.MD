@@ -88,7 +88,8 @@ show collections
 exit
 ```
 
-> :warning: Antes de seguir em frente, é importante destacar que essa instância não tem controle de acesso habilitado, o que permite que você se conecte livremente sem nome de usuário e senha. Do ponto de vista da segurança, essa não é uma configuração recomendada para ambientes de produção.
+> [!WARNING]
+> Antes de seguir em frente, é importante destacar que essa instância não tem controle de acesso habilitado, o que permite que você se conecte livremente sem nome de usuário e senha. Do ponto de vista da segurança, essa não é uma configuração recomendada para ambientes de produção.
 
 Ótimo! Você usou o shell do MongoDB para se conectar a uma instância MongoDB.
 
@@ -102,7 +103,8 @@ Uma vez conectado, você pode navegar e exibir as estruturas do banco de dados.
 db.books.insertOne( { title: "Mother Night", author: "Kurt Vonnegut, Jr." } )
 ```
 
-> :memo: É uma boa prática incluir um identificador único em cada documento quando ele é inserido.
+> [!TIP]
+>  É uma boa prática incluir um identificador único em cada documento quando ele é inserido.
 
 2. Em vez de simplesmente adicionar um documento de livro com o título e o nome do autor, uma opção melhor seria incluir um identificador único, como em:
 
@@ -110,7 +112,8 @@ db.books.insertOne( { title: "Mother Night", author: "Kurt Vonnegut, Jr." } )
 db.books.insertOne( {book_id: 1298747, "title":"Mother Night", "author": "Kurt Vonnegut, Jr."} )
 ```
 
-> :memo: Diferentes bancos de dados de documentos têm recomendações diferentes para identificadores únicos. O MongoDB adiciona um identificador único se nenhum for fornecido.
+> [!TIP]
+>  Diferentes bancos de dados de documentos têm recomendações diferentes para identificadores únicos. O MongoDB adiciona um identificador único se nenhum for fornecido.
 
 3. Em muitos casos, é mais eficiente realizar inserções em massa em vez de uma série de inserções individuais. Por exemplo:
 
@@ -134,7 +137,8 @@ db.books.insertMany([
 ])
 ```
 
-> :memo: Consulte a documentação para verificar os limites no tamanho das inserções em massa. Se você tiver muitos documentos grandes, pode ser necessário realizar várias inserções em massa para garantir que seu conjunto de documentos não exceda o limite de tamanho permitido para inserções em massa.
+> [!TIP]
+>  Consulte a documentação para verificar os limites no tamanho das inserções em massa. Se você tiver muitos documentos grandes, pode ser necessário realizar várias inserções em massa para garantir que seu conjunto de documentos não exceda o limite de tamanho permitido para inserções em massa.
 
 ### 1.7 Deletando dados no MongoDB
 
@@ -151,7 +155,8 @@ db.books.deleteOne( { "author": "Kurt Vonnegut, Jr." } )
 db.books.deleteMany( {} )
 ```
 
-> :memo: É importante ter um cuidado especial ao excluir documentos que possam estar referenciados em outros documentos. Bancos de dados relacionais foram projetados para evitar esse tipo de problema, mas bancos de dados de documentos dependem do código da aplicação para gerenciar esse tipo de integridade de dados.
+> [!TIP]
+>  É importante ter um cuidado especial ao excluir documentos que possam estar referenciados em outros documentos. Bancos de dados relacionais foram projetados para evitar esse tipo de problema, mas bancos de dados de documentos dependem do código da aplicação para gerenciar esse tipo de integridade de dados.
 
 ### 1.8 Atualizando dados no MongoDB
 
