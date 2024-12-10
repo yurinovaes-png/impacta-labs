@@ -5,12 +5,12 @@ O Cypher é uma linguagem de consulta utilizada para interagir com o Neo4j. Ele 
 ### Construíndo a imagem docker do Neo4j
 1. Para construir a imagem, navegue para a pasta **impacta-labs/neo4j** e execute o seguinte comando:
 ```bash
-docker run -d --name neo4j-node -p 7474:7474 -p 7687:7687 impacta_labs_neo4j
+docker build -t impacta_labs_neo4j .
 ```
 
 2. Para iniciar o container, execute o seguinte comando:
 ```bash
-docker build -t impacta_labs_neo4j .
+docker run -d --name neo4j-node -p 7474:7474 -p 7687:7687 impacta_labs_neo4j
 ```
 > [!WARNING]
 > O container pode demorar alguns minutos para iniciar. Você pode acompanhar o progresso usando o comando `docker logs neo4j-node`.
