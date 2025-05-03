@@ -179,7 +179,7 @@ testeHDFS 2
 testeHDFS 3
 ```
 
-> [!INFO]
+> [!IMPORTANT] 
 > Note que o conteúdo desse arquivo é o mesmo do conteúdo original carregado no HDFS. É dessa forma que o HDFS armazena os dados, nos outros DataNodes onde há replica desse arquivo também haverá uma cópia local no Linux
 
 18. Realize o mesmo procedimento de identificar o Block ID e acessar o conteúdo do arquivo no linux para a cópia desse arquivo no diretório HDFS `/user/aluno/novo_diretorio`.
