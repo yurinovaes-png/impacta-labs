@@ -80,16 +80,16 @@ Neste exercício, iremos modelar uma base de dados de compras com cartão de cr�
 
     ![3_databases](./resources/images/3_databases.png)
 
-  > [!NOTE]
-  > Os metadados dos bancos de dados estão sempre visíveis na barra lateral.
+> [!NOTE]
+> Os metadados dos bancos de dados estão sempre visíveis na barra lateral.
 
 5. Crie o banco de dados `credit_card`:  
   - Execute a query Hive abaixo:  
     ```sql
     create database if not exists credit_card location '/db/credit_card';
     ```
-    > [!IMPORTANT]
-    > Por padrão, o Hive armazena os dados no HDFS na pasta `/user/hive/warehouse`, mas neste exercício iremos armazenar os dados em uma pasta diferente, `/db/credit_card`.
+> [!IMPORTANT]
+> Por padrão, o Hive armazena os dados no HDFS na pasta `/user/hive/warehouse`, mas neste exercício iremos armazenar os dados em uma pasta diferente, `/db/credit_card`.
 
   - Verifique que o banco de dados foi criado com sucesso:  
     ```sql
@@ -114,10 +114,10 @@ Neste exercício, iremos modelar uma base de dados de compras com cartão de cr�
     location '/db/credit_card/transactions';
     ```
 
-    > [!NOTE] 
-    > - A tabela `credit_card.transactions` é uma tabela externa, ou seja, os dados não são armazenados no Hive, mas sim no HDFS.  
-    > - A tabela é particionada pela coluna `dt`, que representa a data da transação.  
-    > - A tabela é armazenada no formato de texto delimitado por pipe (`|`).
+> [!NOTE] 
+> - A tabela `credit_card.transactions` é uma tabela externa, ou seja, os dados não são armazenados no Hive, mas sim no HDFS.  
+> - A tabela é particionada pela coluna `dt`, que representa a data da transação.  
+> - A tabela é armazenada no formato de texto delimitado por pipe (`|`).
 
 7. Verifique no menu `Databases` lateral que o novo `schema` foi criado com os novos metadados:  
   - Clique no ícone de refresh (seta circular) para atualizar a lista de bancos de dados, caso necessário.  
@@ -185,14 +185,14 @@ Neste exercício, iremos modelar uma base de dados de compras com cartão de cr�
 
 14. Baixe o arquivo contido neste repositório para popular a tabela.
 
-15. Faça o upload do arquivo para o HDFS:  
-   - Vá para a home do usuário cloudera clicando no ícone da casa.  
-    ![12_home](./resources/images/12_home.png)  
-   - Crie uma nova pasta com nome `importacao_20170912` e entre nela.  
-   - Clique em `Upload` > `File` para enviar um novo arquivo para o HDFS.  
-    ![13_upload_files](./resources/images/13_upload_files.png)  
-   - Verifique que o arquivo agora é listado.  
-    ![14_importacao_csv](./resources/images/14_importacao_csv.png)
+15. Faça o upload do arquivo para o HDFS:
+  - Vá para a home do usuário cloudera clicando no ícone da casa.  
+  ![12_home](./resources/images/12_home.png)  
+  - Crie uma nova pasta com nome `importacao_20170912` e entre nela.  
+  - Clique em `Upload` > `File` para enviar um novo arquivo para o HDFS.  
+  ![13_upload_files](./resources/images/13_upload_files.png)  
+  - Verifique que o arquivo agora é listado.  
+  ![14_importacao_csv](./resources/images/14_importacao_csv.png)
 
 16. Crie uma tabela de stage temporária com o formato do arquivo CSV:  
   - Em um editor Hive, execute:  
@@ -355,5 +355,5 @@ Quer um desafio maior?
     ```sql
     select * from credit_card.transactions_parquet;
     ```
-    > [!NOTE]
-    > O Hive suporta o formato Parquet nativamente, o que significa que você pode criar tabelas Hive que armazenam dados no formato Parquet e usar consultas HiveQL para acessar esses dados. O GZip é um algoritmo de compressão que pode ser usado com o Parquet para reduzir ainda mais o tamanho dos arquivos, mantendo um bom desempenho na leitura e escrita.
+> [!NOTE]
+> O Hive suporta o formato Parquet nativamente, o que significa que você pode criar tabelas Hive que armazenam dados no formato Parquet e usar consultas HiveQL para acessar esses dados. O GZip é um algoritmo de compressão que pode ser usado com o Parquet para reduzir ainda mais o tamanho dos arquivos, mantendo um bom desempenho na leitura e escrita.
