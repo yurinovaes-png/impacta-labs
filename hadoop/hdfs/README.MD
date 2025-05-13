@@ -200,8 +200,8 @@ hdfs dfs -rm -r /user/aluno/
 ```
 Deleted /user/aluno
 ```
-
-## Desafios
+---
+## Desafio
 
 Já terminou o exercício? Quer um desafio maior? Então quero ver você resolver...
 
