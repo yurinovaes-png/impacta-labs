@@ -1,4 +1,4 @@
-## Introdução
+# Introdução
 
 O MapReduce v2 utiliza o _YARN (Yet Another Resource Negotiator)_ como gerenciador de recursos. O YARN é responsável por alocar os recursos do cluster e executar os jobs MapReduce.
 O YARN é composto por dois componentes principais:
@@ -6,30 +6,37 @@ O YARN é composto por dois componentes principais:
 - _NodeManager_: gerencia os containers em cada nó do cluster e executa os tasks dos jobs MapReduce.
 Além disso, o YARN também possui um componente chamado _ApplicationMaster_, que é responsável por gerenciar a execução de um job MapReduce específico.
 
-**Objetivo**
+## Objetivo
 
 Neste exercício iremos executar um job MapReduce para contar palavras de um arquivo com links do Wikipedia que será carregado no HDFS.
 
-**Tempo estimado**
+### Tempo estimado
 
-30 minutos
+:hourglass_flowing_sand: 30 minutos
 
-**Roteiro de atividades**
+### Roteiro de atividades
 
-**A)** Prepação dos dados para execução  
-**B)** Executar o programa de MapReduce  
-**C)** Gerenciar jobs MapReduce em execução
+- **A)** Prepação dos dados para execução
+- **B)** Executar o programa de MapReduce
+- **C)** Gerenciar jobs MapReduce em execução
+- **D)**: Desafio
 
-----------
+---
 
-## Atividades
+# Atividades
 
-### Iniciar a VM
+## Iniciar a VM
 
- - Dê dois cliques no arquivo `cloudera-quickstart-vm-5.12.0-0-vmware.vmx`
- - Esperar 5 minutos
+> Para importar a máquina virtual no [VirtualBox](https://www.virtualbox.org/wiki/Downloads) é necessário instalar também o pacote de extensão.
+- Após instalar o VirtualBox, basta selecionar e clicar duas vezes no arquivo `cloudera-quickstart-vm-5.13.0-0-virtualbox.ovf`.
+  - O processo de importação pode demorar alguns minutos, pois a máquina virtual é grande (cerca de 5 GB).
 
-### A) Prepação dos dados para execução
+- Antes de inicializar a máquina virtual, certifique-se de ter habilitado a opção de rede `Bridged Adapter` para que a máquina virtual tenha acesso à internet e possa ser acessada pela sua máquina.
+  - Clique com o botão direito do mouse na máquina virtual e selecione `Configurações` > `Rede` > `Adaptador 1` > `Conectado a` > `Placa em modo Bridge`.
+
+- Clique em `OK` para salvar as alteraçõe e inicie a máquina virtual clicando com o botão direito do mouse e selecionando `Iniciar`.
+
+## A) Prepação dos dados para execução
 
 1. Num terminal linux, execute o comando para verificar se o diretório aluno já existe no HDFS
 ```shell
@@ -60,7 +67,7 @@ gzip -d fb2w.nt.gz
 hdfs dfs -copyFromLocal /home/cloudera/Downloads/fb2w.nt /user/aluno/
 ```
 
-### B) Executar o programa de MapReduce
+## B) Executar o programa de MapReduce
 
 6. Execute o programa MapReduce de exemplos (`hadoop-mapreduce-examples.jar`) utilizando a função `wordcount` que conta a quantidade de palavras em um arquivo no HDFS.
 ```shell
@@ -76,7 +83,7 @@ hadoop jar /usr/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar wordcount /us
 hdfs dfs -ls /user/aluno/output
 ```
 
-- **Saída esperada**
+**Saída esperada**
 ```
 Found 2 items
 -rw-r--r--   1 cloudera supergroup          0 2017-09-04 15:46 /user/aluno/output/_SUCCESS
@@ -90,11 +97,11 @@ hdfs dfs -cat /user/aluno/output/part-r-00000 | tail
 ```
 
 8. Visualize os logs de execução do job executado pelo browser
-   - No browser acesse a página do [ResourceManager](http://localhost:8088)
+   - No browser acesse a página do [ResourceManager](http://{ip_address}:8088)
    - Clique no ID do job executado (ex: `application_1504562894662_0001`)
    - Clique em `logs` para visualizar os logs da execução
 
-### C) Gerenciar jobs MapReduce em execução
+## C) Gerenciar jobs MapReduce em execução
 
 9. Execute novamente o job de contagem de palavras que acabamos de executar, alterando o diretório de saída para `output2`
 ```shell
@@ -106,7 +113,7 @@ hadoop jar /usr/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar wordcount /us
 hadoop job -list
 ```
 
-- **Saída esperada**
+**Saída esperada**
 ```
 Total jobs:1
 JobId	     State	     StartTime	    UserName	       Queue	  Priority	 UsedContainers	 RsvdContainers	 UsedMem	 RsvdMem NeededMem	   AM info
@@ -117,13 +124,13 @@ job_1504554194266_0002	   RUNNING	 1504561700010	    cloudera	root.cloudera	    
 ```shell
 hadoop job -kill job_1446639780394_0002
 ```
-
-## Desafios
+---
+## Desafio
 
 Já terminou o exercício? Quer um desafio maior? Então quero ver você resolver...
 
 1. Execute mais uma vez o job MapReduce e visualize e acompanhe os logs pela interface web enquanto o job executa.
 
-2. Análise como o arquivo fb2w ficou distribuído no HDFS acessando a página do [NameNode](http://localhost:50070) por meio do browser.
+2. Análise como o arquivo fb2w ficou distribuído no HDFS acessando a página do [NameNode](http://{ip_address}:50070) por meio do browser.
 
 3. Execute novamente o job MapReduce de contagem de palavras com um outro arquivo que você deve criar contendo pelo menos 3 linhas.
