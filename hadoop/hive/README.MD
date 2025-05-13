@@ -100,6 +100,7 @@ Neste exercício, iremos modelar uma base de dados de compras com cartão de cr�
     stored as textfile
     location '/db/credit_card/transactions';
     ```
+
     > [!NOTE] 
     > - A tabela `credit_card.transactions` é uma tabela externa, ou seja, os dados não são armazenados no Hive, mas sim no HDFS.  
     > - A tabela é particionada pela coluna `dt`, que representa a data da transação.  
@@ -136,12 +137,15 @@ Neste exercício, iremos modelar uma base de dados de compras com cartão de cr�
     ![9_create_file](./resources/images/9_create_file.png)
 
 11. Insira no conteúdo do arquivo uma linha no formato esperado:  
-   - Clique no nome do arquivo para editá-lo.  
-   - Clique em `Edit File`.  
-   - Insira o conteúdo a seguir: `2017-09-12 01:23:45|a1b2c3d4|Casas Bahia|APROVADA|BRL|19990`
-
-    **Saída esperada:**  
-    ![10_edit_file](./resources/images/10_edit_file.png)
+  - Clique no nome do arquivo para editá-lo.  
+  - Clique em `Edit File`.  
+  - Insira o conteúdo a seguir:
+  ```
+  2017-09-12 01:23:45|a1b2c3d4|Casas Bahia|APROVADA|BRL|19990
+  ```
+  
+  **Saída esperada:**  
+  ![10_edit_file](./resources/images/10_edit_file.png)
 
 12. Recupere os dados da tabela de transações:  
    - Em um editor Hive, execute:  
@@ -153,13 +157,13 @@ Neste exercício, iremos modelar uma base de dados de compras com cartão de cr�
     ![11_select_estrela](./resources/images/11_select_estrela.png)
 
 13. Outra maneira de inserir dados é através do próprio comando SQL:  
-   - Em um editor Hive, execute:  
+  - Em um editor Hive, execute:  
     ```sql
     insert into table credit_card.transactions partition (dt=20170101)
       values ("2017-01-01 01:23:45","e5f6g7h8","Americanas","APROVADA","BRL",5000);
     ```
-   - Verifique que uma nova partição foi criada em `/db/credit_card/transactions`.  
-   - Verifique que o novo registro é retornado na query abaixo:  
+  - Verifique que uma nova partição foi criada em `/db/credit_card/transactions`.  
+  - Verifique que o novo registro é retornado na query abaixo:  
     ```sql
     select * from credit_card.transactions;
     ```
@@ -336,4 +340,5 @@ Quer um desafio maior?
     ```sql
     select * from credit_card.transactions_parquet;
     ```
-    > **Nota:** O Hive suporta o formato Parquet nativamente, o que significa que você pode criar tabelas Hive que armazenam dados no formato Parquet e usar consultas HiveQL para acessar esses dados. O GZip é um algoritmo de compressão que pode ser usado com o Parquet para reduzir ainda mais o tamanho dos arquivos, mantendo um bom desempenho na leitura e escrita.
+    > [!NOTE]
+    > O Hive suporta o formato Parquet nativamente, o que significa que você pode criar tabelas Hive que armazenam dados no formato Parquet e usar consultas HiveQL para acessar esses dados. O GZip é um algoritmo de compressão que pode ser usado com o Parquet para reduzir ainda mais o tamanho dos arquivos, mantendo um bom desempenho na leitura e escrita.
