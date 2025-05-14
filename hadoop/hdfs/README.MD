@@ -153,6 +153,7 @@ Found 1 items
 ![impacta](./resources/images/3_user_aluno_novo_diretorio.png)
 
 14. Verifique que esse arquivo possui apenas um bloco identificado por um Block ID
+
 ![impacta](./resources/images/4_blockid.png)
 
 15. Copie o Block ID para um bloco de notas para uso futuro
