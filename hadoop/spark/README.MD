@@ -195,8 +195,9 @@ Neste exercício iremos explorar diversas funcionalidades do Spark para processa
     ```
     33318 - Os valores são aleatórios, então a saída pode ser diferente
     ```
-    > [!WARNING]
-    > Como geramos 100K transações, o número de transações aprovadas e canceladas pode variar a cada execução do script.
+
+> [!WARNING]
+> Como geramos 100K transações, o número de transações aprovadas e canceladas pode variar a cada execução do script.
 
 9. Materialize o RDD de transações canceladas no HDFS
 - Execute
