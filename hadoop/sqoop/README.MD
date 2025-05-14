@@ -71,7 +71,7 @@ Certifique-se de que o MySQL está acessível pela máquina virtual. Teste a con
 mysql -u cloudera -p -h cloudera
 ```
 
-### 3. Executar o Sqoop para Extração de Dados
+## C) Executar o Sqoop para Extração de Dados
 
 1. Liste os bancos de dados disponíveis no MySQL:
     ```bash
@@ -97,7 +97,7 @@ mysql -u cloudera -p -h cloudera
     --m 1
     ```
 
-## C) Verificar os Dados no HDFS
+## D) Verificar os Dados no HDFS
 
 Após a execução do comando, verifique se os dados foram importados corretamente para o HDFS:
 ```bash
@@ -105,7 +105,7 @@ hdfs dfs -ls /user/cloudera/employees
 hdfs dfs -cat /user/cloudera/employees/part-m-00000
 ```
 
-## D) Limpeza (Opcional)
+## E) Limpeza (Opcional)
 
 Se desejar, remova os dados importados do HDFS:
 ```bash
