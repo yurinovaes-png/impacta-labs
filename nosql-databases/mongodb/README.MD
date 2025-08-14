@@ -3,7 +3,7 @@
 ### 1.1 Introdução 
 Nosso primeiro passo será nos familiarizar com os componentes principais do MongoDB, ajudando você a entender seu propósito e como interagir com eles.
 
-Ao longo deste laboratório, você interagirá com uma instalação _standalone_ do MongoDB. Em ambientes de produção, você provavelmente ira intergir com um _deploy_ mais completo.
+Ao longo deste laboratório, você ira interagir com uma instalação _standalone_ do MongoDB. Contudo, é importante ressaltar que em ambientes de produção, você provavelmente ira se deparar com um _deploy_ mais completo.
 
 ### 1.2 Componentes  
 Os componentes principais do MongoDB são:
@@ -12,14 +12,14 @@ Os componentes principais do MongoDB são:
 - **mongod**: O processo principal (daemon), o processo central do sistema MongoDB.
 - **mongos**: O processo que direciona consultas e operações de escrita em um cluster fragmentado.
   
-Há também as **Ferramentas de Banco de Dados do MongoDB**, um conjunto de ferramentas para tarefas administrativas, como dump/restore e import/export (dump/restauração e importação/exportação).
+Há também as **Ferramentas de Banco de Dados do MongoDB**, um conjunto de ferramentas para tarefas administrativas, como backup, restauração e importação/exportação de dados. Essas ferramentas são executadas como processos separados e não são necessárias para o funcionamento básico do MongoDB.
 
 ### 1.3 Interação dos Componentes
 Você precisa de uma ferramenta para acessar uma instância do **mongod**. Você pode usar o shell do MongoDB ou uma ferramenta de terceiros.
 
 O fluxo de interação é o seguinte:
 
-**mongo → conecta-se a → mongod**
+**client mongo → conecta-se a → mongod**
 
 Como o **mongod** é o processo do banco de dados, você pode verificar seu status executando o seguinte comando:
 
@@ -140,7 +140,23 @@ db.books.insertMany([
 > [!TIP]
 >  Consulte a documentação para verificar os limites no tamanho das inserções em massa. Se você tiver muitos documentos grandes, pode ser necessário realizar várias inserções em massa para garantir que seu conjunto de documentos não exceda o limite de tamanho permitido para inserções em massa.
 
-### 1.7 Deletando dados no MongoDB
+### 1.7 Exibindo dados no MongoDB
+
+O método `find` é usado para recuperar documentos de uma coleção. Como você pode esperar, o método `find` aceita um documento de consulta opcional que especifica quais documentos devem ser retornados. Se você quiser apenas um subconjunto de documentos no banco de dados, deverá especificar critérios de seleção usando um documento.
+
+1. Por exemplo, o seguinte comando retorna todos os livros de Kurt Vonnegut, Jr.:
+
+```json
+db.books.find( { "author": "Kurt Vonnegut, Jr." } )
+```
+
+2. Posso retornar todos os documentos dentro da coleção `books` usando o seguinte comando:
+
+```json
+db.books.find()
+```
+
+### 1.8 Deletando dados no MongoDB
 
 1. Para deletar um documento, execute o seguinte comando:
 ```json
@@ -158,7 +174,7 @@ db.books.deleteMany( {} )
 > [!TIP]
 >  É importante ter um cuidado especial ao excluir documentos que possam estar referenciados em outros documentos. Bancos de dados relacionais foram projetados para evitar esse tipo de problema, mas bancos de dados de documentos dependem do código da aplicação para gerenciar esse tipo de integridade de dados.
 
-### 1.8 Atualizando dados no MongoDB
+### 1.9 Atualizando dados no MongoDB
 
 1. Para atualizar um documento, execute o seguinte comando:
 ```json
@@ -181,25 +197,16 @@ db.books.find()
 db.books.updateOne( { "title": "Mother Night" }, { $inc: { "quantity": 5 } } )
 ```
 
-### 1.9 Exibindo dados no MongoDB
+### 1.10 Consultas Complexas
+Para realizar consultas mais complexas, você pode usar condicionais e operadores booleanos.
 
-O método `find` é usado para recuperar documentos de uma coleção. Como você pode esperar, o método `find` aceita um documento de consulta opcional que especifica quais documentos devem ser retornados. Se você quiser apenas um subconjunto de documentos no banco de dados, deverá especificar critérios de seleção usando um documento.
-
-1. Por exemplo, o seguinte comando retorna todos os livros de Kurt Vonnegut, Jr.:
-
-```json
-db.books.find( { "author": "Kurt Vonnegut, Jr." } )
-```
-
-Consultas mais complexas são construídas usando condicionais e operadores booleanos. 
-
-2. Para recuperar todos os livros com uma quantidade maior ou igual a 10 e menor que 50, você poderia usar o seguinte comando:
+1. Para recuperar todos os livros com uma quantidade maior ou igual a 10 e menor que 50, você poderia usar o seguinte comando:
 
 ```json
 db.books.find( { "quantity": { $gte: 10, $lt: 50 } } )
 ```
 
-As condicionais e operadores booleanos podem ser combinados para criar expressões mais complexas, o MongoDB permite as seguintes expressões:
+Exemplos de operadores de comparação comuns incluem:
 
 - `$gt`: maior que
 - `$lte`: menor ou igual que
@@ -209,7 +216,8 @@ As condicionais e operadores booleanos podem ser combinados para criar expressõ
 
 Entre outros, veja a [documentação oficial](https://docs.mongodb.com/manual/reference/operator/query-comparison/).
 
-### 1.10 Utilizando agregações no MongoDB
+
+### 1.11 Utilizando agregações no MongoDB
 
 Operações de agregação processam diversos documentos e geram resultados calculados. Você pode usar operações de agregação para:
 - Agrupar valores de diversos documentos.
@@ -232,7 +240,7 @@ db.books.aggregate([
 
 ## Agora é sua vez
 
-> Para os próximos exercícios, uma nova coleção chamada `filmes` deverá conter documentos com os seguintes campos:
+> Para os próximos exercícios, uma nova coleção chamada `filmes` deverá ser criada e conter documentos com os seguintes campos:
 > - `title`
 > - `rating`
 > - `release_date`
@@ -247,3 +255,60 @@ db.books.aggregate([
 3. Usando a coleção `db.filmes`, escreva um comando que retorne a média dos filmes.
 4. Usando a coleção `db.filmes`, escreva um comando para remover todos os filmes com um `rating` menor ou igual a 5.
 5. Usando a coleção `db.filmes`, escreva um comando para exibir todos os filmes com um `rating` maior ou igual a 9.
+
+## 2. Recursos Avançados do MongoDB
+
+O MongoDB é um banco de dados de propósito geral, então além de criar, ler, atualizar e deletar dados, ele fornece a maioria dos recursos que você esperaria de um sistema de gerenciamento de banco de dados e muitos outros que o diferenciam:
+
+### 2.1 Indexação
+
+O MongoDB suporta índices secundários genéricos e fornece capacidades de indexação única, composta, geoespacial e de texto completo. Índices secundários em estruturas hierárquicas como documentos aninhados e arrays também são suportados, permitindo que desenvolvedores aproveitem completamente a capacidade de modelar de formas que melhor se adequem às suas aplicações.
+
+**Tipos de Índices Disponíveis**:
+- **Índices Simples**: Em campos individuais
+- **Índices Compostos**: Em múltiplos campos
+- **Índices Geoespaciais**: Para consultas baseadas em localização (2d, 2dsphere)
+- **Índices de Texto**: Para busca textual completa
+- **Índices Parciais**: Aplicados apenas a documentos que atendem critérios específicos
+
+### 2.2 Framework de Agregação
+
+O MongoDB fornece um framework de agregação baseado no conceito de pipelines de processamento de dados. Pipelines de agregação permitem construir motores de análise complexos processando dados através de uma série de estágios relativamente simples no lado do servidor, aproveitando completamente as otimizações do banco de dados.
+
+**Estágios Comuns de Agregação**:
+- **$match**: Filtragem de documentos
+- **$group**: Agrupamento e cálculos
+- **$sort**: Ordenação de resultados
+- **$project**: Transformação de campos
+- **$lookup**: Junções com outras coleções
+
+### 2.3 Tipos Especiais de Coleções e Índices
+
+O MongoDB suporta coleções time-to-live (TTL) para dados que devem expirar em um determinado momento, como sessões, e coleções de tamanho fixo (capped), para manter dados recentes, como logs. O MongoDB também suporta índices parciais limitados apenas aos documentos que correspondem a um filtro de critérios, a fim de aumentar a eficiência e reduzir a quantidade de espaço de armazenamento necessário.
+
+**Coleções Especializadas**:
+- **Coleções TTL**: Expiração automática de documentos
+- **Coleções Capped**: Tamanho fixo com comportamento FIFO
+- **Coleções Gridfs**: Para armazenamento de arquivos grandes
+
+## 3. Recursos Adicionais para Estudo
+
+### 3.1. Documentação Oficial
+- [MongoDB Manual](https://docs.mongodb.com/manual/) - Documentação completa e atualizada
+- [MongoDB University](https://university.mongodb.com/) - Cursos gratuitos oficiais
+- [MongoDB Blog](https://www.mongodb.com/blog) - Artigos técnicos e casos de uso
+
+### 3.2. Ferramentas Recomendadas
+- **MongoDB Compass**: Interface gráfica oficial para exploração de dados
+- **Studio 3T**: IDE avançado para desenvolvimento MongoDB
+- **NoSQLBooster**: Ferramenta de consulta e administração
+
+### 3.3. Livros Recomendados
+- "MongoDB: The Definitive Guide" por Kristina Chodorow
+- "MongoDB Applied Design Patterns" por Rick Copeland
+- "MongoDB in Action" por Kyle Banker
+
+### 3.4. Comunidade e Suporte
+- [MongoDB Community Forums](https://community.mongodb.com/)
+- [Stack Overflow - MongoDB Tag](https://stackoverflow.com/questions/tagged/mongodb)
+- [MongoDB User Groups](https://www.mongodb.com/community/user-groups) - Grupos locais de usuários
