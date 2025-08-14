@@ -255,3 +255,60 @@ db.books.aggregate([
 3. Usando a coleção `db.filmes`, escreva um comando que retorne a média dos filmes.
 4. Usando a coleção `db.filmes`, escreva um comando para remover todos os filmes com um `rating` menor ou igual a 5.
 5. Usando a coleção `db.filmes`, escreva um comando para exibir todos os filmes com um `rating` maior ou igual a 9.
+
+## 2. Recursos Avançados do MongoDB
+
+O MongoDB é um banco de dados de propósito geral, então além de criar, ler, atualizar e deletar dados, ele fornece a maioria dos recursos que você esperaria de um sistema de gerenciamento de banco de dados e muitos outros que o diferenciam:
+
+### 2.1 Indexação
+
+O MongoDB suporta índices secundários genéricos e fornece capacidades de indexação única, composta, geoespacial e de texto completo. Índices secundários em estruturas hierárquicas como documentos aninhados e arrays também são suportados, permitindo que desenvolvedores aproveitem completamente a capacidade de modelar de formas que melhor se adequem às suas aplicações.
+
+**Tipos de Índices Disponíveis**:
+- **Índices Simples**: Em campos individuais
+- **Índices Compostos**: Em múltiplos campos
+- **Índices Geoespaciais**: Para consultas baseadas em localização (2d, 2dsphere)
+- **Índices de Texto**: Para busca textual completa
+- **Índices Parciais**: Aplicados apenas a documentos que atendem critérios específicos
+
+### 2.2 Framework de Agregação
+
+O MongoDB fornece um framework de agregação baseado no conceito de pipelines de processamento de dados. Pipelines de agregação permitem construir motores de análise complexos processando dados através de uma série de estágios relativamente simples no lado do servidor, aproveitando completamente as otimizações do banco de dados.
+
+**Estágios Comuns de Agregação**:
+- **$match**: Filtragem de documentos
+- **$group**: Agrupamento e cálculos
+- **$sort**: Ordenação de resultados
+- **$project**: Transformação de campos
+- **$lookup**: Junções com outras coleções
+
+### 2.3 Tipos Especiais de Coleções e Índices
+
+O MongoDB suporta coleções time-to-live (TTL) para dados que devem expirar em um determinado momento, como sessões, e coleções de tamanho fixo (capped), para manter dados recentes, como logs. O MongoDB também suporta índices parciais limitados apenas aos documentos que correspondem a um filtro de critérios, a fim de aumentar a eficiência e reduzir a quantidade de espaço de armazenamento necessário.
+
+**Coleções Especializadas**:
+- **Coleções TTL**: Expiração automática de documentos
+- **Coleções Capped**: Tamanho fixo com comportamento FIFO
+- **Coleções Gridfs**: Para armazenamento de arquivos grandes
+
+## 3. Recursos Adicionais para Estudo
+
+### 3.1. Documentação Oficial
+- [MongoDB Manual](https://docs.mongodb.com/manual/) - Documentação completa e atualizada
+- [MongoDB University](https://university.mongodb.com/) - Cursos gratuitos oficiais
+- [MongoDB Blog](https://www.mongodb.com/blog) - Artigos técnicos e casos de uso
+
+### 3.2. Ferramentas Recomendadas
+- **MongoDB Compass**: Interface gráfica oficial para exploração de dados
+- **Studio 3T**: IDE avançado para desenvolvimento MongoDB
+- **NoSQLBooster**: Ferramenta de consulta e administração
+
+### 3.3. Livros Recomendados
+- "MongoDB: The Definitive Guide" por Kristina Chodorow
+- "MongoDB Applied Design Patterns" por Rick Copeland
+- "MongoDB in Action" por Kyle Banker
+
+### 3.4. Comunidade e Suporte
+- [MongoDB Community Forums](https://community.mongodb.com/)
+- [Stack Overflow - MongoDB Tag](https://stackoverflow.com/questions/tagged/mongodb)
+- [MongoDB User Groups](https://www.mongodb.com/community/user-groups) - Grupos locais de usuários
