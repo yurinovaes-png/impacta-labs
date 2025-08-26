@@ -1,9 +1,41 @@
-## Explorando o Cassandra e conhecendo o CQL
+# Fundamentos do Apache Cassandra
 
-O CQL (Cassandra Query Language) é uma linguagem de consulta utilizada para interagir com o Cassandra. Ele fornece uma sintaxe simples e prática para criar e manipular dados no Cassandra.
+## 1. Introdução
 
-### Construíndo a imagem docker do Apache Cassandra 
-1. Para construir a imagem, navegue para a pasta **impacta-labs/cassandra** e execute o seguinte comando:
+O modelo de dados do **Cassandra** pode ser descrito como um **armazenamento de linhas particionado**, no qual os dados são armazenados em **tabelas hash multidimensionais esparsas**.
+
+* **“Esparso”** significa que, para uma determinada linha, você pode ter uma ou mais colunas, mas cada linha **não precisa ter todas as mesmas colunas que as outras linhas** (como acontece em um modelo relacional).
+* **“Particionado”** significa que cada linha possui uma **chave de partição única**, usada para **distribuir as linhas entre vários nós para armazenamento de dados**.
+
+Portanto, embora utilize um modelo de dados baseado em famílias de colunas (column families), em que os dados são agrupados em famílias, as informações de uma linha específica são armazenadas juntas, e não separadas por coluna.
+
+Isso é diferente de um banco de dados verdadeiramente orientado a colunas (columnar), que armazena todos os valores de uma única coluna juntos em disco para otimizar consultas analíticas.
+
+### Comparativo: Modelo Relacional x Cassandra
+
+| Aspecto                        | Modelo Relacional (SQL)                                                               | Cassandra (NoSQL)                                                                 |
+| ------------------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **Definição de colunas**       | Todas as colunas da tabela são **definidas previamente**.                             | Colunas podem **variar por linha**; não precisam ser iguais para todas.           |
+| **Alocação de espaço**         | Espaço reservado para cada coluna, **mesmo que não tenha valor** (NULL).              | Apenas colunas com valores são armazenadas, evitando espaço desperdiçado.         |
+| **Estrutura de armazenamento** | Dados armazenados em **linhas completas** (linha = todas as colunas definidas).       | Dados armazenados em uma **tabela hash multidimensional e ordenada**.             |
+| **Entrada de dados**           | Cada linha é armazenada como um único registro contendo todos os campos.              | Cada valor de coluna é armazenado como uma **entrada separada** na hash table.    |
+| **Colunas vazias**             | Registradas como **NULL** (consumindo espaço).                                        | **Omitidas** completamente, reduzindo uso de armazenamento.                       |
+| **Eficiência em consultas**    | Bom para **consultas complexas** envolvendo junções (JOINs) e integridade relacional. | Bom para **consultas rápidas** em grandes volumes de dados distribuídos.          |
+
+Em suas versões iniciais, o Cassandra era fiel ao _whitepaper_ original do Bigtable, oferecendo suporte a um modelo de dados “sem esquema” (schema-free), no qual novas colunas podiam ser definidas dinamicamente.
+
+Bancos de dados schema-free, como o Bigtable e o MongoDB, têm a vantagem de serem muito extensíveis e de apresentarem alto desempenho no acesso a grandes volumes de dados.
+
+A principal desvantagem dos bancos de dados sem esquema é a dificuldade em determinar o significado e o formato dos dados, o que limita a capacidade de realizar consultas complexas e se torna uma barreira de entrada para muitos usuários.
+
+A solução para esses usuários foi a introdução da Cassandra Query Language (CQL), que fornece uma forma de definir esquemas por meio de uma sintaxe semelhante à Structured Query Language (SQL), já familiar para aqueles que vêm de um histórico relacional.
+
+## 2. Explorando o Cassandra e conhecendo o CQL
+
+Como visto no início deste documento, o CQL (Cassandra Query Language) é uma linguagem de consulta utilizada para interagir com o Cassandra. Ele fornece uma sintaxe simples e prática para criar e manipular dados no Cassandra.
+
+### 2.1. Construíndo a imagem docker do Apache Cassandra 
+1. Para construir a imagem, navegue para a pasta **nosql-databases/cassandra** e execute o seguinte comando:
 ```bash
 docker build -t impacta_labs_cassandra .
 ```
@@ -15,17 +47,18 @@ docker run -d --name cassandra-node -p 9042:9042 impacta_labs_cassandra
 
 > [!WARNING]
 > O container pode demorar alguns minutos para iniciar. Você pode acompanhar o progresso usando o comando `docker logs cassandra-node`.
+> `INFO  [main] 2025-08-26 14:09:57,019 CassandraDaemon.java:744 - Startup complete` é o retorno esperado em caso de sucesso
 
 3. Para acessar o shell do Cassandra, execute o seguinte comando:   
 ```bash  
 docker exec -it cassandra-node cqlsh
 ```
 
-### 1. Criando um Keyspace
+### 2.2. Criando um Keyspace
 
 Um *keyspace* no Cassandra é algo semelhante a um banco de dados relacional. Ele define uma ou mais tabelas. Quando você inicia o `cqlsh` sem especificar um *keyspace*, o prompt aparecerá assim: `cqlsh>`, sem nenhum *keyspace* especificado.
 
-Agora você criará seu próprio *keyspace* para ter onde escrever os dados. Ao criar um *keyspace*, existem algumas opções obrigatórias. Para explorar essas opções, você poderia usar o comando `HELP CREATE_KEYSPACE`, mas, em vez disso, pode usar os recursos úteis de autocompletar do `cqlsh`. Execute o seguinte comando, clique em algum lugar no terminal e pressione a tecla **Tab**:
+Agora você criará seu próprio *keyspace* para ter onde escrever os dados. Ao criar um *keyspace*, existem algumas opções obrigatórias. Para explorar essas opções, você poderia usar o comando `HELP CREATE_KEYSPACE` (necessário ter um browser instalado para visualizar), mas, em vez disso, pode usar os recursos úteis de autocompletar do `cqlsh`. Execute o seguinte comando, clique em algum lugar no terminal e pressione a tecla **Tab**:
 
 ```sql
 CREATE KEYSPACE impacta_keyspace WITH
@@ -43,6 +76,11 @@ Isso indica que, para especificar um *keyspace*, você também precisa definir u
 CREATE KEYSPACE impacta_keyspace WITH replication = {'class': '
 NetworkTopologyStrategy  SimpleStrategy
 ```
+
+> [!NOTE]
+> As opções de estratégia de replicação disponíveis representam como os dados serão replicados entre os nós do cluster Cassandra.
+> - `NetworkTopologyStrategy`: permite definir diferentes fatores de replicação para diferentes datacenters em caso de um cluster multi-datacenter.
+> - `SimpleStrategy`: usa um único fator de replicação para todos os nós.
 
 Agora, o `cqlsh` está apresentando duas estratégias para escolher. Por enquanto, escolha a `SimpleStrategy`, digitando o nome, e indique que terminou com uma aspas de fechamento. Pressione **Tab** novamente:
 
@@ -69,6 +107,9 @@ DESCRIBE KEYSPACE impacta_keyspace;
 
 Você verá que a tabela foi criada com `SimpleStrategy`, um `replication_factor` de 1 e com gravações duráveis (_durable writes_). Note que o keyspace é descrito com uma sintaxe muito semelhante à que você usou para criá-lo, com uma opção adicional que não foi especificada: `durable_writes = true`.
 
+> [!NOTE]
+> `durable_writes = true` significa que o Cassandra irá persistir as gravações no disco antes de confirmar a operação. Isso garante que os dados não sejam perdidos em caso de falha. Contudo, `durable_writes` pode impactar a performance de gravação, pois envolve operações adicionais de I/O.
+
 Depois de criar seu próprio keyspace, você pode alternar para ele no shell digitando:
 
 ```sql
@@ -80,7 +121,7 @@ USE impacta_keyspace;
 > [!TIP]
 >  Você pode ter se perguntado por que sugeri nomear seu keyspace em **"snake case"** (por exemplo, `impacta_keyspace`) em vez de **"camel case"** (como `MyKeyspace`), que é mais familiar para desenvolvedores que utilizam Java e outras linguagens. Acontece que o Cassandra processa automaticamente os nomes de keyspace, tabelas e colunas como **letras minúsculas**. Quando você insere nomes em letras maiúsculas e minúsculas combinadas (_mixed case_), o Cassandra os armazena como letras minúsculas. Esse comportamento pode ser sobrescrito ao envolver os nomes entre aspas duplas (por exemplo, `CREATE KEYSPACE "MyKeyspace"`). No entanto, tende a ser muito mais simples usar **snake case** do que contrariar essa convenção.
 
-### 2. Criando uma Tabela
+### 2.3. Criando uma Tabela
 
 Agora que você tem um _keyspace_, pode criar uma tabela nele. Para fazer isso no `cqlsh`, use o seguinte comando:
 
@@ -90,12 +131,8 @@ CREATE TABLE user (first_name text, last_name text, title text, PRIMARY KEY (las
 
 Este comando cria uma nova tabela chamada `user` no seu _keyspace_ atual, com três colunas para armazenar o nome, sobrenome e um título, todos do tipo `text`.
 
-Os tipos `text` e `varchar` são sinônimos e usados para armazenar strings. Mas qual o motivo do CQL fornece dois tipos de dados para representar texto?
-
-- `text` e `varchar` são sinônimos para uma string de caracteres em UTF-8 (equivalente a `java.lang.String`).  
-- `ascii` é para uma string de caracteres no formato ASCII.
-
-O UTF-8 é o padrão de texto mais recente e amplamente utilizado, além de suportar a internacionalização. Por isso, recomendo usar `text` em vez de `ascii` ao construir tabelas para novos dados. O tipo `ascii` é mais útil se você estiver lidando com dados legados no formato ASCII.
+> [!NOTE]
+> O UTF-8 é o padrão de texto mais recente e amplamente utilizado, além de suportar a internacionalização. Por isso, recomendo usar `text` ou `varchar` (são equivalentes) em vez de `ascii` ao construir tabelas para novos dados. O tipo `ascii` é mais útil se você estiver lidando com dados legados no formato ASCII.
 
 Além disso, especificamos uma chave primária para esta tabela, composta pelos campos `first_name` e `last_name`, e utilizou os valores padrão para outras opções da tabela. Por enquanto, vamos considerar essa combinação de nomes como identificadora de linhas únicas na sua tabela. A coluna `title` é a única da tabela que não faz parte da chave primária.
 
@@ -107,16 +144,54 @@ DESCRIBE TABLE user;
 
 > :eyes: Você notará que o `cqlsh` imprime uma versão bem formatada do comando `CREATE TABLE` que você digitou, mas também inclui os valores padrão para todas as opções disponíveis da tabela que você não especificou.
 
-### 3. Inserindo dados
+```sql
+CREATE TABLE impacta_keyspace.user (
+  last_name text,
+  first_name text,
+  title text,
+  PRIMARY KEY (last_name, first_name)
+  -- Define o modo de ordenação das colunas de clustering
+) WITH CLUSTERING ORDER BY (first_name ASC)
+  -- Define a política de gravação, os valores possíves são '99p', '95p', '90p', '85p', '80p' (Cada um representa um percentil de latência)
+  AND additional_write_policy = '99p'
+  -- Define a política de snapshot, os valores possíveis são 'true' ou 'false'
+  AND allow_auto_snapshot = true
+  /*
+  Controla a taxa de falsos positivos do Bloom filter, neste caso, quanto menor mais memória RAM é utilizada.
+  O bloom_filter é uma estrutura de dados probabilística que é usada para testar se um elemento está presente em um conjunto.
+  Neste caso o Cassandra implementa-o para detectar rapidamente se uma chave pode estar presente em uma partição
+  */
+  AND bloom_filter_fp_chance = 0.01
+  -- Define a política de cache, os valores possíveis são 'ALL', 'NONE', 'ROWS', 'KEYS' (cada um representa um nível de cache)
+  AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'})
+  -- Habilita ou desabilita o Change Data Capture para uma determinada tabela, significando que operações de escrita serão registradas ou não no log de entrada CDC.
+  AND cdc = false
+  AND comment = ''
+  AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+  AND compression = {'chunk_length_in_kb': '16', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+  AND memtable = 'default'
+  AND crc_check_chance = 1.0
+  AND default_time_to_live = 0
+  AND extensions = {}
+  AND gc_grace_seconds = 864000
+  AND incremental_backups = true
+  AND max_index_interval = 2048
+  AND memtable_flush_period_in_ms = 0
+  AND min_index_interval = 128
+  AND read_repair = 'BLOCKING'
+  AND speculative_retry = '99p';
+```
+
+### 2.4. Inserindo dados
 Agora que você tem um keyspace e uma tabela, pode gravar alguns dados no banco de dados e recuperá-los. Tudo bem se, neste momento, você ainda não entender completamente o que está acontecendo. Você vai aprender o modelo de dados do Cassandra em breve. Por enquanto, você tem um _keyspace_ (banco de dados), que contém uma tabela, que por sua vez armazena colunas, a unidade atômica de armazenamento de dados.
 
-Para gravar linhas, você usa o comando `INSERT`:
+Para gravar linhas, você usa o comando `INSERT`, similar ao SQL:
 
 ```sql
 INSERT INTO user (first_name, last_name, title) VALUES ('Bill', 'Nguyen', 'Mr.');
 ```
 
-### 4. Consultando dados
+### 2.5. Consultando dados
 Agora que você inseriu alguns dados, pode lê-los usando o comando SELECT:  
 
 ```sql
@@ -157,11 +232,10 @@ Em seguida, repita o comando `SELECT` anterior:
 SELECT * FROM user WHERE last_name = 'Nguyen';
 ```
 
-Como você pode ver, ao particionar os usuários pelo `last_name`, você torna possível carregar toda a partição em uma única consulta fornecendo apenas o `last_name`. Para acessar apenas uma única linha, você precisará especificar a chave primária completa:
+Como você pode ver, ao particionar os usuários pelo `last_name`, você torna possível carregar toda a partição em uma única consulta fornecendo apenas o `last_name`. Para acessar apenas uma única linha, você precisará especificar a combinação completa:
 
 ```sql
-SELECT * FROM user WHERE last_name='Nguyen' AND
-  first_name='Bill';
+SELECT * FROM user WHERE last_name='Nguyen' AND first_name='Bill';
 ```
 
 Resumindo esse ponto importante: os comandos `SELECT`, `INSERT`, `UPDATE` e `DELETE` em CQL operam em termos de linhas. Para os comandos `INSERT` e `UPDATE`, todas as colunas da chave primária devem ser especificadas na cláusula `WHERE` para identificar a linha específica que será afetada. Já os comandos `SELECT` e `DELETE` podem operar em uma ou mais linhas dentro de uma partição, em uma partição inteira ou até mesmo em várias partições utilizando as cláusulas `WHERE` e `IN`.
@@ -227,7 +301,7 @@ SELECT COUNT (*) FROM user;
 
 Observe que, ao executar este comando, o `cqlsh` retorna a contagem correta de linhas, mas também exibe um aviso. Isso acontece porque você pediu ao Cassandra para realizar uma varredura completa na tabela. Em um cluster com diversos nós e grandes volumes de dados, esse `COUNT` pode ser uma operação muito cara. Essa é uma das várias maneiras pelas quais o Cassandra tenta alertá-lo ou limitar sua capacidade de realizar operações que podem ter baixo desempenho em escala em uma arquitetura distribuída.
 
-### 5. Alterando dados
+### 2.6. Alterando dados
 
 O CQL oferece suporte aos tipos numéricos que você esperaria, incluindo números inteiros e de ponto flutuante. Esses tipos são semelhantes aos tipos padrão em Java e outras linguagens:
 
@@ -253,6 +327,8 @@ Agora você pode atualizar os registros existentes para incluir os valores de lo
 UPDATE user SET logins = 1 WHERE first_name = 'Bill' AND last_name = 'Nguyen';
 ```
 
+> Como visto anteriormente, essa mesma operação também poderia ter sido realizada utilizando o comando `INSERT`, contudo o uso do comando `UPDATE` deixa claro que você está modificando uma linha existente.
+
 Faça uma consulta nos dados para ver como os valores aparecem:
 
 ```sql
@@ -273,7 +349,7 @@ Cassandra também fornece vários tipos para representar o tempo.
 - 2015-06-15T20:05:07.013+-0700  
 
 > [!TIP]
->  A melhor prática para esses tipos é sempre fornecer os fusos horários em vez de depender da configuração de fuso horário do sistema operacional.
+>  A melhor prática para esses tipos é sempre fornecer os fusos horários em vez de depender da configuração de fuso horário do sistema operacional. Ou tratar todas as datas como UTC-0.
 
 Vamos usar o tipo `timestamp` para adicionar uma coluna à tabela `user` representando quando a conta foi criada:
 
@@ -293,19 +369,13 @@ Ou pode usar a função `currentTimestamp()` para permitir que o Cassandra defin
 UPDATE user SET account_created = currentTimestamp() WHERE first_name = 'Bill' AND last_name = 'Nguyen';
 ```
 
-Agora verifique os resultados:
-
-```sql
-SELECT * FROM user WHERE last_name = 'Nguyen';
-```
-
 O CQL também fornece funções práticas para conversão de data/hora, incluindo `toDate()`:
 
 ```sql
 SELECT toDate(account_created) FROM user WHERE last_name = 'Nguyen';
 ```
 
-#### Tipos Avançados
+### 2.7. Tipos Avançados
 
 Agora, digamos que você queira estender a tabela de usuários para suportar múltiplos endereços de e-mail. Uma maneira de fazer isso seria criar colunas adicionais, como email1, email2, email3, e assim por diante. Embora essa abordagem funcione, ela não escala muito bem e pode causar muito retrabalho. É muito mais simples lidar com os endereços de e-mail como um grupo ou "coleção." O CQL fornece três tipos de coleções para ajudá-lo nessas situações: conjuntos (*sets*), listas (*lists*) e mapas (*maps*).
 
@@ -461,7 +531,7 @@ SELECT login_sessions FROM user
 
 Também podemos referenciar um item individual no **map** usando sua chave.
 
-### 6. Tempo de Vida (TTL) de um dado no Apache Cassandra
+### 2.8. Tempo de Vida (TTL) de um dado no Apache Cassandra
 Uma funcionalidade muito poderosa que o Cassandra oferece é a capacidade de expirar dados que não são mais necessários. Essa expiração é bastante flexível e funciona no nível de valores de colunas individuais. O **time to live (TTL)** é um valor que o Cassandra armazena para cada valor de coluna, indicando por quanto tempo manter esse valor.
 
 O valor do TTL tem como padrão `null`, o que significa que os dados escritos não expirarão. Vamos demonstrar isso adicionando a função `ttl()` a um comando `SELECT` no cqlsh para verificar o valor TTL do título de Mary:
@@ -513,7 +583,7 @@ Lembre-se de que o TTL é armazenado no nível de colunas para colunas que não 
 
 Se você quiser definir o TTL para toda uma linha, deverá fornecer um valor para cada coluna que não seja chave primária no seu comando `INSERT` ou `UPDATE`.
 
-### 6. Removendo dados 
+### 2.9. Removendo dados 
 Se você realmente quiser limpar as coisas, pode remover todos os dados da tabela usando o comando `TRUNCATE`:
 
 ```sql
@@ -526,7 +596,7 @@ Alternativamente, você pode excluir completamente o esquema da tabela usando o 
 DROP TABLE user;
 ```
 
-## Modelagem de Dados no Cassandra
+## 3. Modelagem de Dados no Cassandra
 
 Ao projetar modelos de dados no Cassandra, você começa pelo modelo de consulta. Em contraste modelagem relacional, onde você primeiro modela os dados e depois escreve as consultas, no Cassandra você modela as consultas e organiza os dados em torno delas.
 
@@ -794,5 +864,51 @@ DESCRIBE TABLES;
 ````
 
 ![Modelo de dados físico](./resources/images/hotel_physical.png)
+
+## 4. Agora é sua vez
+
+1. **Crie um novo keyspace para um sistema de reservas de voos.**
+  - Utilize `SimpleStrategy` e `replication_factor` igual a 1.
+  - Nomeie o keyspace como `flight_reservation`.
+
+2. **Defina uma tabela para armazenar informações de passageiros.**
+  - A tabela deve conter: `passport_number` (chave primária), `first_name`, `last_name`, `birth_date`, e um conjunto de `emails`.
+
+3. **Insira pelo menos dois passageiros na tabela criada.**
+  - Inclua múltiplos e-mails para um dos passageiros.
+
+4. **Adicione uma coluna de tipo `list<text>` para armazenar os números de telefone dos passageiros.**
+  - Atualize um dos registros para incluir dois números de telefone.
+
+5. **Crie uma tabela para armazenar reservas de voos.**
+  - Inclua: `reservation_id` (chave primária), `passport_number`, `flight_number`, `seat_number`, `reservation_date` (timestamp).
+
+6. **Insira uma reserva para um dos passageiros.**
+  - Utilize a função `currentTimestamp()` para o campo `reservation_date`.
+
+7. **Como você contaria quantos passageiros reservaram assentos em um determinado voo?**
+
+8. **Como você consultaria quais passageiros estão em um voo específico?**
+
+9. **Como você determinaria quais voos tiveram mais reservas em um determinado período?**
+
+10. **Quais passageiros fizeram mais reservas em um intervalo de tempo?**
+
+## 5. Recursos Adicionais para Estudo
+
+### 5.1. Documentação Oficial
+- [Cassandra Documentation](https://cassandra.apache.org/doc/latest/) - Documentação completa e atualizada
+- [Cassandra Tutorials](https://cassandra.apache.org/doc/latest/tutorials/index.html) - Tutoriais oficiais para iniciantes e usuários avançados
+
+### 5.2. Ferramentas Recomendadas
+- [Cassandra Reaper](https://cassandra-reaper.io/): Ferramenta de gerenciamento e monitoramento de clusters Cassandra 
+
+### 5.3. Livros Recomendados
+- ["Cassandra: The Definitive Guide, (Revised) Third Edition, 3rd Edition"](https://a.co/d/dFv3XvD) por Jeff Carpenter e Eben Hewitt
+- ["Mastering Apache Cassandra - Second Edition"](https://a.co/d/0nrp0FX) por Nishant Neeraj
+- ["Cassandra Data Modeling and Analysis"](https://a.co/d/j3U4bS3) por C.Y. Kan
+
+### 5.4. Comunidade e Suporte
+- [Cassandra Community Forums](https://cassandra.apache.org/community/)
 
 Parabéns você chegou ao final do lab! Nele espero que tenha aprendido como criar um modelo de dados Cassandra completo e funcional e a comperação com um modelo relacional equivalente.
