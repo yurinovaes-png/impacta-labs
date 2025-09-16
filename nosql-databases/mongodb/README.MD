@@ -54,7 +54,7 @@ Em vez de se conectar ao `mongod`, a aplicação deve se conectar a um roteador 
 Para tarefas administrativas, você pode usar o shell do MongoDB para se conectar tanto ao `mongos` quanto ao `mongod`.
 
 ### 1.5 Construíndo a imagem docker do MongoDB 
-1. Para construir a imagem, navegue para a pasta **impacta-labs/mongodb** e execute o seguinte comando:
+1. Para construir a imagem, navegue para a pasta **impacta-labs/nosql-databases/mongodb** e execute o seguinte comando:
 ```bash
 docker build -t impacta_labs_mongodb .
 ```
@@ -238,7 +238,7 @@ db.books.aggregate([
 ])
 ```
 
-## Agora é sua vez
+## 2. Agora é sua vez
 
 > Para os próximos exercícios, uma nova coleção chamada `filmes` deverá ser criada e conter documentos com os seguintes campos:
 > - `title`
@@ -256,11 +256,11 @@ db.books.aggregate([
 4. Usando a coleção `db.filmes`, escreva um comando para remover todos os filmes com um `rating` menor ou igual a 5.
 5. Usando a coleção `db.filmes`, escreva um comando para exibir todos os filmes com um `rating` maior ou igual a 9.
 
-## 2. Recursos Avançados do MongoDB
+## 3. Recursos Avançados do MongoDB
 
 O MongoDB é um banco de dados de propósito geral, então além de criar, ler, atualizar e deletar dados, ele fornece a maioria dos recursos que você esperaria de um sistema de gerenciamento de banco de dados e muitos outros que o diferenciam:
 
-### 2.1 Indexação
+### 3.1 Indexação
 
 O MongoDB suporta índices secundários genéricos e fornece capacidades de indexação única, composta, geoespacial e de texto completo. Índices secundários em estruturas hierárquicas como documentos aninhados e arrays também são suportados, permitindo que desenvolvedores aproveitem completamente a capacidade de modelar de formas que melhor se adequem às suas aplicações.
 
@@ -271,7 +271,7 @@ O MongoDB suporta índices secundários genéricos e fornece capacidades de inde
 - **Índices de Texto**: Para busca textual completa
 - **Índices Parciais**: Aplicados apenas a documentos que atendem critérios específicos
 
-### 2.2 Framework de Agregação
+### 3.2 Framework de Agregação
 
 O MongoDB fornece um framework de agregação baseado no conceito de pipelines de processamento de dados. Pipelines de agregação permitem construir motores de análise complexos processando dados através de uma série de estágios relativamente simples no lado do servidor, aproveitando completamente as otimizações do banco de dados.
 
@@ -282,7 +282,7 @@ O MongoDB fornece um framework de agregação baseado no conceito de pipelines d
 - **$project**: Transformação de campos
 - **$lookup**: Junções com outras coleções
 
-### 2.3 Tipos Especiais de Coleções e Índices
+### 3.3 Tipos Especiais de Coleções e Índices
 
 O MongoDB suporta coleções time-to-live (TTL) para dados que devem expirar em um determinado momento, como sessões, e coleções de tamanho fixo (capped), para manter dados recentes, como logs. O MongoDB também suporta índices parciais limitados apenas aos documentos que correspondem a um filtro de critérios, a fim de aumentar a eficiência e reduzir a quantidade de espaço de armazenamento necessário.
 
@@ -291,24 +291,22 @@ O MongoDB suporta coleções time-to-live (TTL) para dados que devem expirar em 
 - **Coleções Capped**: Tamanho fixo com comportamento FIFO
 - **Coleções Gridfs**: Para armazenamento de arquivos grandes
 
-## 3. Recursos Adicionais para Estudo
+## 4. Recursos Adicionais para Estudo
 
-### 3.1. Documentação Oficial
+### 4.1. Documentação Oficial
 - [MongoDB Manual](https://docs.mongodb.com/manual/) - Documentação completa e atualizada
-- [MongoDB University](https://university.mongodb.com/) - Cursos gratuitos oficiais
+- [MongoDB University](https://learn.mongodb.com/) - Cursos gratuitos oficiais
 - [MongoDB Blog](https://www.mongodb.com/blog) - Artigos técnicos e casos de uso
 
-### 3.2. Ferramentas Recomendadas
-- **MongoDB Compass**: Interface gráfica oficial para exploração de dados
-- **Studio 3T**: IDE avançado para desenvolvimento MongoDB
-- **NoSQLBooster**: Ferramenta de consulta e administração
+### 4.2. Ferramentas Recomendadas
+- [**MongoDB Compass**](https://www.mongodb.com/try/download/compass): Interface gráfica oficial para exploração de dados
+- [**Studio 3T**](https://studio3t.com/): IDE avançado para desenvolvimento MongoDB
+- [**NoSQLBooster**](https://nosqlbooster.com/): Ferramenta de consulta e administração
 
-### 3.3. Livros Recomendados
-- "MongoDB: The Definitive Guide" por Kristina Chodorow
-- "MongoDB Applied Design Patterns" por Rick Copeland
-- "MongoDB in Action" por Kyle Banker
+### 4.3. Livros Recomendados
+- ["Mongodb: The Definitive Guide: Powerful and Scalable Data Storage"](https://a.co/d/gFowprQ) por Kristina Chodorow
+- ["MongoDB Applied Design Patterns: Practical Use Cases with the Leading NoSQL Database"](https://a.co/d/9YXm182) por Rick Copeland
+- ["MongoDB in Action, Third Edition: Building on the Atlas Data Platform"](https://a.co/d/2F80syd) por Arek Borucki
 
-### 3.4. Comunidade e Suporte
+### 4.4. Comunidade e Suporte
 - [MongoDB Community Forums](https://community.mongodb.com/)
-- [Stack Overflow - MongoDB Tag](https://stackoverflow.com/questions/tagged/mongodb)
-- [MongoDB User Groups](https://www.mongodb.com/community/user-groups) - Grupos locais de usuários
