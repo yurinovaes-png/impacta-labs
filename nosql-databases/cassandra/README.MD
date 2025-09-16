@@ -291,6 +291,8 @@ Se você estiver acompanhando de perto, pode ter notado que ambas as instruçõe
 
 Como o Cassandra usa um modelo de adição (append), não há diferença fundamental entre as operações de inserção e atualização. Se você inserir uma linha com a mesma chave primária de uma linha existente, a linha será substituída. Se você atualizar uma linha cuja chave primária não existe, o Cassandra a criará.
 
+!Cassandra não permite alteração de schema em colunas já existentes (atualizar)
+
 Por esse motivo, muitas vezes se diz que o Cassandra suporta `upsert`, o que significa que inserções e atualizações são tratadas da mesma forma, com uma pequena exceção relacionada a transações leves.
 
 Muitos novos usuários do Cassandra, especialmente aqueles vindos de um contexto relacional, tendem a usar o comando `SELECT COUNT` como uma forma de garantir que os dados foram escritos. Por exemplo, você poderia usar o seguinte comando para verificar a inserção na tabela `user`:  
